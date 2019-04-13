@@ -52,20 +52,6 @@ Do this for all the instances you want to put in `setA`.
 
 Run `sudo mongod --config /etc/mongod-X.conf` for all members of the replica set to start running them.
 
-Connect to any one of the instances of the replica set through the mongo shell using `mongo localhost:<port>`. The instance that you connect to will become the primary replica of that set. Run the following within the mongo shell ([source](https://premaseem.wordpress.com/2016/02/14/mongodb-script-to-run-sharding-with-replica-set-on-local-machine/)):
-
-```js
-config = {
-   _id: 's0',
-   members: [
-      { _id : 0, host : "localhost:37017" },
-      { _id : 1, host : "localhost:37018" },
-      { _id : 2, host : "localhost:37019" }
-   ]
-};
-rs.initiate(config);
-```
-
 ### Connect To A Replica Set through Node.js
 
 Official tutorial [here](http://mongodb.github.io/node-mongodb-native/3.2/tutorials/connect/). Here's an example of connecting to a replica set `setA`, whose members run on ports `27018`, `27019` and `27020`, all on host `localhost`.
