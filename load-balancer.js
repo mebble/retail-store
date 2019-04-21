@@ -7,9 +7,9 @@ const appPorts = [3001, 3002, 3003];
 const appLoads = [0, 0, 0];
 
 const app = express();
-app.use(express.static(__dirname + '/static'));
 
-app.get('*', async (req,res) => {
+app.use(express.static(__dirname + '/static'));
+app.use('*', async (req,res) => {
     try {
         const [ choice ] = argmins(appLoads);
         appLoads[choice]++;
