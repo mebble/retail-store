@@ -14,13 +14,14 @@ app.get('*', async (req,res) => {
         const [ choice ] = argmins(appLoads);
         appLoads[choice]++;
         const url = `http://localhost:${appPorts[choice]}${req.originalUrl}`;
-        console.log(url, appLoads);
+        console.log(url, appLoads, 'request');
         const resApp = await request(url);
         appLoads[choice]--;
+        console.log(url, appLoads, 'reponse');
 
         res.send(resApp);
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         res.status(500).send('Ooopsie!');
     }
 });

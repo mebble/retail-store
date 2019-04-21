@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "An online retail store",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:server": "nodemon load-balancer.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +18,12 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "hbs": "^4.0.3"
+    "hbs": "^4.0.3",
+    "mongodb": "^3.2.3",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.11"
   }
 }

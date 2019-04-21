@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{pageTitle}}</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
 </head>
 <body>
     <p>{{banner}}</p>
-    <form method="GET" action="/two">
-        <input type="text" name="text-field" />
-        <button type="submit">Send</button>
-    </form>
+    <button class="btn-test">Test</button>
+    <script>
+        document.querySelector('.btn-test').addEventListener('click', function() {
+            fetch('/test')
+                .then(res => console.log(res))
+                .catch(err => console.error(err));
+        });
+    </script>
 </body>
 </html>
