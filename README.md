@@ -24,7 +24,6 @@ systemLog:
 storage:
    journal:
       enabled: true
-processManagement:
 ```
 
 You'll need superuser priveleges to create and edit the file. Replace every `X` with the instance name. For the `net` section of the config file, `port` needs to start from `27018`, as the port of the default instance is `27017`. We also need to manually run `mkdir /srv/mongodb/dbX/` to create the directory database storage before starting the instance.
@@ -33,7 +32,7 @@ You'll need superuser priveleges to create and edit the file. Replace every `X` 
 
 The official instructions for the `mongod` process are [here](https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/).
 
-- To start instance `X`, run `sudo mongod --config /etc/mongod-X.conf`
+- To start instance `X`, run `sudo mongod --config /etc/mongod-X.conf`. Alternatively, you can use the script provided in `./scripts` to run all the instances of the cluster
 - If any error occurs, check the contents of the log file at `/var/log/mongodb/dbX.log`
 - To connect to an instance through the mongo shell, run `mongo localhost:<port>`, with the port of the appropritate instance
 
@@ -48,13 +47,27 @@ replication:
 
 Do this for all the instances you want to put in `setA`.
 
-### Running A Replica Set
+### Initiating A Replica Set
 
 Run `sudo mongod --config /etc/mongod-X.conf` for all members of the replica set to start running them.
 
+Connect to any one of the instances of the replica set through the mongo shell using `mongo localhost:<port>`. The instance that you connect to will become the primary replica of that set. Run the following within the mongo shell ([source](https://premaseem.wordpress.com/2016/02/14/mongodb-script-to-run-sharding-with-replica-set-on-local-machine/)) to initiate the set (here `setA`):
+
+```js
+config = {
+   _id: 'setA',
+   members: [
+      { _id : 0, host : "localhost:<port1>" },
+      { _id : 1, host : "localhost:<port2>" },
+      { _id : 2, host : "localhost:<port3>" }
+   ]
+};
+rs.initiate(config);
+```
+
 ### Connect To A Replica Set through Node.js
 
-Official tutorial [here](http://mongodb.github.io/node-mongodb-native/3.2/tutorials/connect/). Here's an example of connecting to a replica set `setA`, whose members run on ports `27018`, `27019` and `27020`, all on host `localhost`.
+First run all the mongodb instances through `sudo mongod --config /etc/mongod-X.conf`. Alternatively, you can use the script provided in `./scripts` to run all the instances. Then connect to them from Node as given at the official tutorial [here](http://mongodb.github.io/node-mongodb-native/3.2/tutorials/connect/). Here's an example of connecting to a replica set `setA`, whose members run on ports `27018`, `27019` and `27020`, all on host `localhost`.
 
 ```js
 const { MongoClient } = require('mongodb');
@@ -70,7 +83,7 @@ MongoClient.connect(replicaSetMembers)
     .catch(err => console.error(err));
 ```
 
-To shut down a replica set, run `sudo mongod --config /etc/mongod-X.conf --shutdown` for all members `X` of the replica set.
+To shut down a replica set, run `sudo mongod --config /etc/mongod-X.conf --shutdown` for all members `X` of the replica set, or use the script provided in the `./scripts` directory to shut down all replica sets.
 
 ## MongoDB Sharding
 

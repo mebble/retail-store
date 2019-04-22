@@ -1,4 +1,4 @@
-node app.js 3001 & app0_pid=$!
-node app.js 3002 & app1_pid=$!
-node app.js 3003 & app2_pid=$!
+node server.js 3001 & server0_pid=$!
+node server.js 3002 & server1_pid=$!
+node server.js 3003 & server2_pid=$!
 node load-balancer.js 3000
