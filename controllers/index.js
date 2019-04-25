@@ -1,7 +1,7 @@
-const vendor = require('./vendor');
+const vendors = require('./vendors');
 
 module.exports = (db) => {
     return {
-        vendor: vendor(db)
+        vendors: vendors(db)
     };
 };
