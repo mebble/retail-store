@@ -26,7 +26,33 @@ storage:
       enabled: true
 ```
 
-You'll need superuser priveleges to create and edit the file. Replace every `X` with the instance name. For the `net` section of the config file, `port` needs to start from `27018`, as the port of the default instance is `27017`. We also need to manually run `mkdir /srv/mongodb/dbX/` to create the directory database storage before starting the instance.
+You'll need superuser priveleges to create and edit the file. Replace every `X` with the instance name. For the `net` section of the config file, `<port>` needs to start from `27018`, as the port of the default instance is `27017`. We also need to manually run `mkdir /srv/mongodb/dbX/` to create the directory database storage before starting the instance.
+
+This project's configuration structure is shown below. You'll have to create all these files/folders manually. The config file contents should follow the template shown above. These files (with these exact names) are what the source code expects. Also, the mongodb port numbers have currently been hard-coded in `server.js`, which is why the required port to be put in `<port>` in each `.conf` file has also been mentioned below.
+
+```
+Config files:
+/etc/mongod-A1.conf  (<port> = 27018)
+/etc/mongod-A2.conf  (27019)
+/etc/mongod-A3.conf  (27020)
+/etc/mongod-B1.conf  (27021)
+/etc/mongod-B2.conf  (27022)
+/etc/mongod-B3.conf  (27023)
+/etc/mongod-meta1.conf  (27030)
+/etc/mongod-meta2.conf  (27031)
+/etc/mongod-meta3.conf  (27032)
+
+Database storage directories:
+/srv/mongodb/dbA1
+/srv/mongodb/dbA2
+/srv/mongodb/dbA3
+/srv/mongodb/dbB1
+/srv/mongodb/dbB2
+/srv/mongodb/dbB3
+/srv/mongodb/meta1
+/srv/mongodb/meta2
+/srv/mongodb/meta3
+```
 
 ### Starting An Instance
 

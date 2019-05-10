@@ -1,5 +1,6 @@
 const express = require('express');
 const request = require('request-promise');
+const bodyParser = require('body-parser');
 
 const { argmins } = require('./utils');
 
@@ -9,15 +10,25 @@ const appLoads = [0, 0, 0];
 const app = express();
 
 app.use(express.static(__dirname + '/static'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use('*', async (req,res) => {
     try {
         const [ choice ] = argmins(appLoads);
         appLoads[choice]++;
         const url = `http://localhost:${appPorts[choice]}${req.originalUrl}`;
-        console.log(url, appLoads, 'request');
-        const resApp = await request(url);
+        const promise = request({
+            uri: url,
+            method: req.method,
+            headers: {
+                'content-type': req.get('content-type')
+            },
+            body: JSON.stringify(req.body)
+        });
+        console.log(req.method, url, appLoads, 'request');
+        const resApp = await promise;
         appLoads[choice]--;
-        console.log(url, appLoads, 'reponse');
+        console.log(req.method, url, appLoads, 'reponse');
 
         res.send(resApp);
     } catch (error) {

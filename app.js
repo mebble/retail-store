@@ -1,15 +1,14 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const hbs = require('hbs');
+const bodyParser = require('body-parser');
 
 module.exports = (db) => {
     const app = express();
     const controllers = require('./controllers')(db);
 
     app.set('view engine', 'hbs');
-    app.use(bodyParser.urlencoded({
-        extended: true
-    }));
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
 
     app.get('/', (req, res) => {
         res.render('home.hbs', {
@@ -24,7 +23,7 @@ module.exports = (db) => {
         });
     });
 
-    app.use('/vendor', controllers.vendor);
+    app.use('/vendors', controllers.vendors);
 
     app.get('/test', (req, res) => {
         res.send(`RESPONSE: ${Date.now()}`);
