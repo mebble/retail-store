@@ -14,6 +14,7 @@ module.exports = (db) => {
     app.get('/', (req, res) => {
         res.render('home.hbs', {
             pageTitle: 'Home Page',
+            indexPageTitle: 'Retail Store',
             banner: 'Retail Store!'
         }, (err, html) => {
             if (err) {

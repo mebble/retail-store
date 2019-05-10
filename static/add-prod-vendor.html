@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>{{pageTitle}}</title>
+<title>pageTitle</title>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="description" content="Music template project">
@@ -30,28 +30,35 @@
 					<!-- Tours Content -->
 					<div class="col-lg-8 order-lg-2 order-1">
 						<div class="tours_content">
-							<div class="section_title"><h1>{{productName}} items</h1></div>
+							<div class="section_title"><h1>productName items</h1></div>
 							<div class="tours_list_container">
 								<ul class="tours_list">
 
 
 									<!-- Tour -->
-									{{#each item}}
 									<li class=" flex-row align-items-start justify-content-start">
 										<div class="tour_info">
-											<img src="images/a22.jpg" align="left" hspace="20"  style="width:150px;height:150px;">
-											<div class="tour_date">&nbsp; {{this.itemName}}</div>
-											<div class="tour_name">&nbsp; &nbsp; <a href="#">Item ID : <i>{{this.itemID}}</i></a></div>
-											<div class="tour_location">&nbsp; &nbsp;Vendor ID : <i> {{this.itemVendor}} </i></div>
+											<!-- <img src="images/a22.jpg" align="left" hspace="20"  style="width:150px;height:150px;"> --> 
+                                            <div class="tour_date"> Item Name</div>
+                                            <br>
+                                            <input class="button2" type="text" name="quantity" placeholder="Enter Name"/>
+                                            <br>
+                                            <br>
+                                            <br>
+
+                                            <div class="tour_date"> Price</div>
+                                            <br>
+                                            <input class="button2" type="text" name="quantity" placeholder="Price per unit"/>
+                                            <br>
+
 										</div>
 										<br><br><br>
-										&nbsp;&nbsp;&nbsp;
-										<input class="button2" type="text" name="quantity" placeholder="Enter Quantity"/>
+										
 										<div class="button tour_button ml-auto">
-											<a href="/checkout.html">BUY : Rs. {{this.itemPrice}}</a>
+											<a href="/checkout.html">ADD</a>
 										</div>
 									</li>
-									{{/each}}
+									/each
 	
 								</ul>
 							</div>
