@@ -17,16 +17,16 @@
 <body background="images/food1.jpg">
 
 <div class="super_container">
-	
+
 	<!-- Header -->
 	<!-- Tours -->
-	
+
 	<div class="tours">
 			<div class="background_image" style="background-image:url(images/food.png)"></div>
 			<div class="container">
-					
+
 				<div class="row row-lg-eq-height">
-						
+
 					<!-- Tours Content -->
 					<div class="col-lg-8 order-lg-2 order-1">
 						<div class="tours_content">
@@ -38,38 +38,51 @@
 									<!-- Tour -->
 									<li class=" flex-row align-items-start justify-content-start">
 										<div class="tour_info">
-											<!-- <img src="images/a22.jpg" align="left" hspace="20"  style="width:150px;height:150px;"> --> 
+											<!-- <img src="images/a22.jpg" align="left" hspace="20"  style="width:150px;height:150px;"> -->
                                             <div class="tour_date"> Item Name</div>
                                             <br>
-                                            <input class="button2" type="text" name="quantity" placeholder="Enter Name"/>
+                                            <input id="id-name" class="button2" type="text" placeholder="Enter Name" required="true"/>
                                             <br>
                                             <br>
                                             <br>
 
                                             <div class="tour_date"> Price</div>
                                             <br>
-                                            <input class="button2" type="text" name="quantity" placeholder="Price per unit"/>
+                                            <input id="id-price" class="button2" type="number" placeholder="Price per unit" required="true"/>
                                             <br>
+
+											<div class="tour_date"> Category</div>
+											<br>
+											<select id="id-category" required="true">
+												<option value="food">Food</option>
+												<option value="clothing">Clothing</option>
+												<option value="automobiles">Automobiles</option>
+												<option value="sports">Sports</option>
+												<option value="electronics">Electronics</option>
+												<option value="home-furniture">Home & Furniture</option>
+											</select>
+											<br>
 
 										</div>
 										<br><br><br>
-										
-										<div class="button tour_button ml-auto">
-											<a href="/checkout.html">ADD</a>
-										</div>
+
+										{{!-- <div class="button ml-auto">
+
+										</div> --}}
+										<button id="submit-item" type="button">ADD</button>
 									</li>
-	
+
 								</ul>
 							</div>
 							<!-- <div class="tours_link"><a href="">Next Page</a></div> -->
 						</div>
 					</div>
-	
+
 				</div>
 			</div>
 		</div>
 
-		
+
 	<!-- Footer -->
 
 	<footer class="footer">
@@ -78,7 +91,7 @@
 				<div class="container">
 					<div class="row">
 						<div class="col text-center">
-	
+
 							<!-- Logo -->
 							<div class="logo">
 								<a href="#" class="d-flex flex-row align-items-end justify-content-start">
@@ -86,7 +99,7 @@
 									<span class="logo_text"><font color='#000000'>Online Retail Store</font></span>
 								</a>
 							</div>
-	
+
 							<!-- Footer Social -->
 							<div class="footer_social">
 								<ul class="d-flex flex-row align-items-center justify-content-center">
@@ -97,7 +110,7 @@
 									<li><a href="#"><i class="fa fa-behance" aria-hidden="true"></i></a></li>
 								</ul>
 							</div>
-	
+
 						</div>
 					</div>
 				</div>
@@ -115,7 +128,7 @@
 					</div>
 				</div>
 			</div>
-				
+
 		</footer>
 </div>
 
@@ -135,5 +148,29 @@
 <script src="plugins/parallax-js-master/parallax.min.js"></script>
 <script src="plugins/scrollTo/jquery.scrollTo.min.js"></script>
 <script src="js/custom.js"></script>
+<script>
+	$('#submit-item').click(function(event) {
+		const name = $('#id-name').val();
+		const price = parseFloat($('#id-price').val());
+		const category = $('#id-category').val();
+		const vendorID = '5cd6dbe990f16d4ed120b62e';
+
+		if (isNaN(price)) return;
+		const data = {
+			product: { name, price, category, vendorID }
+		};
+		$.ajax({
+			type: 'POST',
+			url: '/product',
+			data: JSON.stringify(data),
+			success: function (response) {
+				console.log(response);
+				console.log('posted!', Date.now());
+			},
+			contentType: 'application/json'
+		});
+		event.preventDefault();
+	});
+</script>
 </body>
 </html>

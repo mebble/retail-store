@@ -13,6 +13,9 @@ app.use(express.static(__dirname + '/static'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('*', async (req,res) => {
+    // console.log('***********', req.originalUrl);
+    // console.log('*******', req.path);
+    // console.log('*************', req.baseUrl);
     try {
         const [ choice ] = argmins(appLoads);
         appLoads[choice]++;

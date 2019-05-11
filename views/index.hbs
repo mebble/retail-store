@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>{{indexPageTitle}}</title>
+<title>{{pageTitle}}</title>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="description" content="Music template project">
@@ -17,7 +17,7 @@
 <body>
 
 <div class="super_container">
-	
+
 	<!-- Header -->
 
 	<header class="header">
@@ -34,7 +34,7 @@
 							</a>
 						</div>
 <!-- main navigation
-						
+
 						<nav class="main_nav">
 							<ul class="d-flex flex-row align-items-center justify-content-start">
 								<li class="active"><a href="index.html">Home</a></li>
@@ -46,15 +46,15 @@
 						</nav>
 
 -->
-						
+
 
 						<!-- User area -->
 						<div class="log_reg d-flex flex-row align-items-center justify-content-start">
 							<ul class="d-flex flex-row align-items-start justify-content-start">
 								<font size='4'>Vendor &nbsp; </font>
-								<li><a href="#">Login</a></li>
+								<li><a href="/login">Login</a></li>
 								<!-- <li><a href="#">Register</a></li>	 -->
-								
+
 							</ul>
 
 							<!-- Hamburger -->
@@ -89,11 +89,11 @@
 	<!-- Home -->
 
 	<div class="home">
-		
+
 		<!-- Home Slider -->
 		<div class="home_slider_container">
 			<div class="owl-carousel owl-theme home_slider">
-				
+
 				<!-- Slide -->
 				<div class="slide">
 					<div class="background_image" style="background-image:url(images/a22.png)"></div>
@@ -106,21 +106,20 @@
 											<div class="home_title islive text-center"><font size='20' color='#ffffff'>Select a product</font></div>
 										</div>
 										<div class="tickets_form_container">
-											<form action="#" class="tickets_form">
+											<form method="GET" action="/products" class="tickets_form">
 												<div class="d-flex flex-md-row flex-column align-items-start justify-content-md-between justify-content-start">
-													
 														<div class="custom_dropdown tickets_form_input cdd">
 															<div class="custom_dropdown_selected cdd">Categories</div>
-															<ul class="cdd">
-																<li>Food</li>
-																<li>Clothing</li>
-																<li>Automobiles</li>
-																<li>Sports</li>
-																<li>Electronics</li>
-																<li>Home & Furniture</li>
-															</ul>
+															<select id="id-category" class="cdd" name="category">
+																<option value="food">Food</option>
+																<option value="clothing">Clothing</option>
+																<option value="automobiles">Automobiles</option>
+																<option value="sports">Sports</option>
+																<option value="electronics">Electronics</option>
+																<option value="home-furniture">Home & Furniture</option>
+															</select>
 														</div>
-													<button class=" button"><span>Search</span></button>
+													<button type="submit" class="button"><span>Search</span></button>
 												</div>
 											</form>
 										</div>
@@ -135,7 +134,7 @@
 
 		</div>
 	</div>
-	
+
 	<!-- Footer -->
 
 	<footer class="footer">
@@ -181,7 +180,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 				</div>
 			</div>
 		</div>
-			
+
 	</footer>
 </div>
 
