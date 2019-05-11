@@ -6,6 +6,7 @@ module.exports = ({ dbA, dbB, meta }) => {
     router.get('/', async (req, res) => {
         res.send('GET /vendors');
     });
+
     
     router.post('/', async (req, res) => {
         try {
