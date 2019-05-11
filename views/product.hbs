@@ -17,16 +17,16 @@
 <body background="images/food1.jpg">
 
 <div class="super_container">
-	
+
 	<!-- Header -->
 	<!-- Tours -->
-	
+
 	<div class="tours">
 			<div class="background_image" style="background-image:url(images/food.png)"></div>
 			<div class="container">
-					
+
 				<div class="row row-lg-eq-height">
-						
+
 					<!-- Tours Content -->
 					<div class="col-lg-8 order-lg-2 order-1">
 						<div class="tours_content">
@@ -36,34 +36,35 @@
 
 
 									<!-- Tour -->
-									{{#each item}}
+									{{#each items}}
 									<li class=" flex-row align-items-start justify-content-start">
 										<div class="tour_info">
 											<img src="images/a22.jpg" align="left" hspace="20"  style="width:150px;height:150px;">
-											<div class="tour_date">&nbsp; {{this.itemName}}</div>
-											<div class="tour_name">&nbsp; &nbsp; <a href="#">Item ID : <i>{{this.itemID}}</i></a></div>
-											<div class="tour_location">&nbsp; &nbsp;Vendor ID : <i> {{this.itemVendor}} </i></div>
+											<div class="tour_date">&nbsp; {{this.name}}</div>
+											<div class="tour_name">&nbsp; &nbsp; <a href="#">Item ID : <i>{{this._id}}</i></a></div>
+											<div class="tour_location">&nbsp; &nbsp;Vendor ID : <i> {{this.vendorID}} </i></div>
 										</div>
 										<br><br><br>
 										&nbsp;&nbsp;&nbsp;
-										<input class="button2" type="text" name="quantity" placeholder="Enter Quantity"/>
-										<div class="button tour_button ml-auto">
-											<a href="/checkout.html?id={{this.itemID}}">BUY : Rs. {{this.itemPrice}}</a>
-										</div>
+										<form method="GET" action="/checkout">
+											<input class="button2" type="number" name="quantity" placeholder="Enter Quantity" />
+											<input style="display: none" name="id" value="{{this._id}}">
+											<button type="submit">BUY : Rs. {{this.price}}</button>
+										</form>
 									</li>
 									{{/each}}
-	
+
 								</ul>
 							</div>
 							<!-- <div class="tours_link"><a href="">Next Page</a></div> -->
 						</div>
 					</div>
-	
+
 				</div>
 			</div>
 		</div>
 
-		
+
 	<!-- Footer -->
 
 	<footer class="footer">
@@ -72,7 +73,7 @@
 				<div class="container">
 					<div class="row">
 						<div class="col text-center">
-	
+
 							<!-- Logo -->
 							<div class="logo">
 								<a href="#" class="d-flex flex-row align-items-end justify-content-start">
@@ -80,7 +81,7 @@
 									<span class="logo_text"><font color='#000000'>Online Retail Store</font></span>
 								</a>
 							</div>
-	
+
 							<!-- Footer Social -->
 							<div class="footer_social">
 								<ul class="d-flex flex-row align-items-center justify-content-center">
@@ -91,7 +92,7 @@
 									<li><a href="#"><i class="fa fa-behance" aria-hidden="true"></i></a></li>
 								</ul>
 							</div>
-	
+
 						</div>
 					</div>
 				</div>
@@ -109,7 +110,7 @@
 					</div>
 				</div>
 			</div>
-				
+
 		</footer>
 </div>
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const hbs = require('hbs');
 const bodyParser = require('body-parser');
+const { ObjectID } = require('mongodb');
 
 const { argmins } = require('./utils');
 
@@ -16,23 +17,64 @@ module.exports = ({ dbA, dbB, meta }) => {
         res.render('index.hbs', {
             pageTitle: 'Home Page'
         }, (err, html) => {
-            if (err) {
-                return res.send('Rendering error');
-            }
+            if (err) return res.send('Rendering error');
             res.send(html);
         });
     });
 
+    app.get('/checkout', async (req, res) => {
+        const id = req.query.id;
+        const quantity = parseInt(req.query.quantity);
+        if (isNaN(quantity)) return res.send('Invalid quantity');
+        try {
+            const doc = await meta.collection('lookup').findOne({ object_id: id });
+            const db = {
+                'setA': dbA,
+                'setB': dbB
+            }[doc.shard];
+            const product = await db.collection('products').findOne({ _id: new ObjectID(doc.object_id) });
+            const total = product.price * quantity;
+            res.render('checkout.hbs', {
+                pageTitle: 'Checkout',
+                name: product.name,
+                _id: product._id,
+                vendorID: product.vendorID,
+                totalPrice: total
+            }, (err, html) => {
+                if (err) return res.send('Rendering error');
+                res.send(html);
+            });
+        } catch (error) {
+            res.send('Some error occurred');
+        }
+    });
+
     app.get('/products', async (req, res) => {
         const { category } = req.query;
-        let products;
         try {
-            products = await dbA.products.find({ category });
+            const p1 = dbA.collection('products').find({ category }).toArray();
+            const p2 = dbB.collection('products').find({ category }).toArray();
+            const [ resA, resB ] = await Promise.all([p1, p2]);
+            const products = [...resA, ...resB];
+            // vendorIds = await Promise.all(products.map(async p => {
+            //     await dbA.collection('vendors').find({ _id: new ObjectId(p.vendorID) });
+            //     await dbB.collection('vendors').find({ _id: new ObjectId(p.vendorID) });
+            // }));
+            console.log(products);
+            res.render('product.hbs', {
+                pageTitle: 'Products',
+                productName: category,
+                items: products
+            }, (err, html) => {
+                if (err) {
+                    return res.send('Rendering error');
+                }
+                res.send(html);
+            });
         } catch (error) {
-            console.log('error hooo');
+            console.log('foofoofoo');
+            res.send('Some error occurred');
         }
-        console.log(products);
-        res.send('yes');
     });
 
     app.get('/vendors', async (req, res) => {
