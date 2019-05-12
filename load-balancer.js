@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const { argmins } = require('./utils');
 
 const PORT = parseInt(process.argv[2]);
-const appPorts = [4001, 4002, 4003];
+const appPorts = [3001, 3002, 3003];
 const appLoads = [0, 0, 0];
 
 const app = express();
