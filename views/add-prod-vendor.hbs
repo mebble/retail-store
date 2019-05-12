@@ -30,7 +30,8 @@
 					<!-- Tours Content -->
 					<div class="col-lg-8 order-lg-2 order-1">
 						<div class="tours_content">
-							<div class="section_title"><h1>Add your Product</h1></div>
+							<div class="section_title"><h1>Welcome, {{vendorName}}<br>Add your Product</h1></div>
+							<span id="vendor-id" style="display: none" data-id="{{vendorID}}"></span>
 							<div class="tours_list_container">
 								<ul class="tours_list">
 
@@ -153,12 +154,14 @@
 		const name = $('#id-name').val();
 		const price = parseFloat($('#id-price').val());
 		const category = $('#id-category').val();
-		const vendorID = '5cd6dbe990f16d4ed120b62e';
+		const vendorID = $('#vendor-id').data('id');
 
 		if (isNaN(price)) return;
 		const data = {
 			product: { name, price, category, vendorID }
 		};
+		console.log(data);
+		console.log('posting...')
 		$.ajax({
 			type: 'POST',
 			url: '/product',
