@@ -13,31 +13,7 @@ An online retail store
 
 ### MongoDB cluster setup
 
-This project's configuration structure is shown below. You'll have to create all these files/folders manually. The `.conf` file contents should follow the template shown below in "Configuration File". These files (with these exact names) are what the source code expects. Also, the mongodb port numbers have currently been hard-coded in `server.js`, which is why the required port to be put in `<port>` in each `.conf` file has also been mentioned below.
-
-```
-Config files:
-/etc/mongod-A1.conf  (<port> = 27018)
-/etc/mongod-A2.conf  (27019)
-/etc/mongod-A3.conf  (27020)
-/etc/mongod-B1.conf  (27021)
-/etc/mongod-B2.conf  (27022)
-/etc/mongod-B3.conf  (27023)
-/etc/mongod-meta1.conf  (27030)
-/etc/mongod-meta2.conf  (27031)
-/etc/mongod-meta3.conf  (27032)
-
-Database storage directories:
-/srv/mongodb/A1
-/srv/mongodb/A2
-/srv/mongodb/A3
-/srv/mongodb/B1
-/srv/mongodb/B2
-/srv/mongodb/B3
-/srv/mongodb/meta1
-/srv/mongodb/meta2
-/srv/mongodb/meta3
-```
+The MongoDB cluster is made up of mongoDB instances and replica sets. A replica set is a set of instances that are replcas of one another. In this project, there are three replica sets (`setA`, `setB` and `metaSet`), with each set containing three instances.
 
 ### Example
 
@@ -74,7 +50,33 @@ replication:
   replSetName: setA
 ```
 
-After creating the above file for `A1`, `A2` and `A3`, you need to register their replica
+This project's configuration structure is shown below. You'll have to create all these files/folders manually. The `.conf` file contents should follow the template shown below in "Configuration File". These exact file names are what the source code expects. Also, the mongodb port numbers have currently been hard-coded in `server.js`, which is why the required port to be put in `<port>` in each `.conf` file has also been mentioned below.
+
+```
+Config files:
+/etc/mongod-A1.conf  (<port> = 27018)
+/etc/mongod-A2.conf  (27019)
+/etc/mongod-A3.conf  (27020)
+/etc/mongod-B1.conf  (27021)
+/etc/mongod-B2.conf  (27022)
+/etc/mongod-B3.conf  (27023)
+/etc/mongod-meta1.conf  (27030)
+/etc/mongod-meta2.conf  (27031)
+/etc/mongod-meta3.conf  (27032)
+
+Database storage directories:
+/srv/mongodb/A1
+/srv/mongodb/A2
+/srv/mongodb/A3
+/srv/mongodb/B1
+/srv/mongodb/B2
+/srv/mongodb/B3
+/srv/mongodb/meta1
+/srv/mongodb/meta2
+/srv/mongodb/meta3
+```
+
+After creating the above files and folders for `A1`, `A2` and `A3`, you need to register their replica
 set, `setA`. Open a mongo client:
 
 ```bash
@@ -93,6 +95,8 @@ config = {
 };
 rs.initiate(config);
 ```
+
+Perform the same steps for registering instances to `setB` and `metaSet`.
 
 The database configuration is now complete. To install server-side libraries, run:
 
