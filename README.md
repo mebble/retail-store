@@ -13,7 +13,13 @@ An online retail store
 
 ### MongoDB cluster setup
 
-The MongoDB cluster is made up of mongoDB instances and replica sets. A replica set is a set of instances that are replcas of one another. In this project, there are three replica sets (`setA`, `setB` and `metaSet`), with each set containing three instances.
+The MongoDB cluster is made up of mongoDB instances and replica sets. A replica set is a set of instances that are replicas of one another. In this project, there are three replica sets (`setA`, `setB` and `metaSet`), with each set containing three instances.
+
+```
+setA = { A1, A2, A3 }
+setB = { B1, B2, B3 }
+metaSet = { meta1, meta2, meta3 }
+```
 
 ### Example
 
@@ -50,7 +56,7 @@ replication:
   replSetName: setA
 ```
 
-This project's configuration structure is shown below. You'll have to create all these files/folders manually. The `.conf` file contents should follow the template shown below in "Configuration File". These exact file names are what the source code expects. Also, the mongodb port numbers have currently been hard-coded in `server.js`, which is why the required port to be put in `<port>` in each `.conf` file has also been mentioned below.
+Notice the entry `replSetName: setA`, which says that `A1` belongs to the replica set `setA`. This project's configuration structure is shown below. You'll have to create all these files/folders manually. The `.conf` file contents should follow the template shown below in "Configuration File". These exact file names are what the source code expects. Also, the mongodb port numbers have currently been hard-coded in `server.js`, which is why the required port to be put in `<port>` in each `.conf` file has also been mentioned below.
 
 ```
 Config files:
