@@ -74,6 +74,8 @@ systemLog:
 storage:
    journal:
       enabled: true
+replication:
+  replSetName: setA
 ```
 
 ### Starting An Instance

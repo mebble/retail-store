@@ -1,10 +1,13 @@
 const express = require('express');
 const hbs = require('hbs');
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const { ObjectID } = require('mongodb');
 
 const { argmins } = require('./utils');
 
+const JWT_SECRET = 'kfj20efu8FJ2ef9fjj2FJE29f0BFon2okf';
 
 module.exports = ({ dbA, dbB, meta }) => {
     const app = express();
@@ -82,7 +85,7 @@ module.exports = ({ dbA, dbB, meta }) => {
     });
 
     app.get('/login', async (req, res) => {
-        res.render('add-prod-vendor.hbs', {}, (err, html) => {
+        res.render('login-vendor.hbs', {}, (err, html) => {
             if (err) {
                 return res.send('Rendering error');
             }
@@ -101,24 +104,133 @@ module.exports = ({ dbA, dbB, meta }) => {
                 'setB': dbB
             }[shard];
             if (typeof db === 'undefined') {
-                res.send('Couldn\'t find shard');
+                return res.send('Couldn\'t find shard');
             }
 
             const { product } = req.body;
             const inserted = (await db.collection('products').insertOne(product)).ops[0];
-            meta.collection('shards')
-                .findOneAndUpdate({ name: shard }, {
-                    $inc: { size: 1 }
-                }, { returnOriginal: false });
-            meta.collection('lookup').insertOne({
+            await meta.collection('shards')
+                .findOneAndUpdate(
+                    { name: shard },
+                    { $inc: { size: 1 } },
+                    { returnOriginal: false }
+                );
+            await meta.collection('lookup').insertOne({
                 object_id: inserted._id.toString(),
                 shard: shard
             });
             res.send({ product: inserted });
         } catch (error) {
-            console.log('*************************************************');
             console.log(error);
             res.send('errorsss')
+        }
+    });
+
+    app.post('/access', async (req, res) => {
+        // form object has been stringified and is a key within req.body
+        const form = JSON.parse(Object.keys(req.body)[0]);
+        console.log(form);
+        try {
+            if (form.type === 'login') {
+                let db;
+                let v1;
+                try {
+                    v1 = await dbA.collection('vendors').findOne({ name: form.name });
+                    db = dbA;
+                } catch (error) {
+                    v1 = undefined;
+                }
+                let v2;
+                try {
+                    v2 = await dbB.collection('vendors').findOne({ name: form.name });
+                    db = dbB;
+                } catch (error) {
+                    v2 = undefined;
+                }
+                const vendor = v1
+                    ? v1
+                    : v2
+                    ? v2 : undefined;
+                if (typeof vendor === 'undefined') return res.send("Vendor doesn't exist");
+
+                const access = 'auth';
+                const token = jwt.sign({
+                    _id: vendor._id.toString(),
+                    access
+                }, JWT_SECRET).toString();
+                await db.collection('vendors')
+                    .findOneAndUpdate(
+                        { _id: vendor._id },
+                        { $push: { tokens: { access, token } } },
+                        { returnOriginal: false }
+                    );
+                res.set('x-auth', token);
+                res.render('add-prod-vendor.hbs', {
+                    pageTitle: 'Dashboard',
+                    vendorName: vendor.name,
+                    vendorID: vendor._id.toString()
+                }, (err, html) => {
+                    if (err) return res.send('Rendering error');
+                    res.send(html);
+                });
+            } else if (form.type === 'signup') {
+                const shards = await meta.collection('shards').find().toArray();
+                const sizes = shards.map(r => r.size);
+                const [i] = argmins(sizes);
+                const shard = shards[i].name;
+                const db = {
+                    'setA': dbA,
+                    'setB': dbB
+                }[shard];
+                if (typeof db === 'undefined') {
+                    return res.send('Couldn\'t find shard');
+                }
+
+                const { name, password } = form;
+                const hash = await bcrypt.hash(password, 10);
+                const inserted = (await db.collection('vendors').insertOne({
+                    name,
+                    password: hash,
+                    tokens: []
+                })).ops[0];
+
+                await meta.collection('shards')
+                    .findOneAndUpdate(
+                        { name: shard },
+                        { $inc: { size: 1 } },
+                        { returnOriginal: false }
+                    );
+                await meta.collection('lookup').insertOne({
+                    object_id: inserted._id.toString(),
+                    shard: shard
+                });
+
+                const access = 'auth';
+                const token = jwt.sign({
+                    _id: inserted._id.toString(),
+                    access
+                }, JWT_SECRET).toString();
+                await db.collection('vendors')
+                    .findOneAndUpdate(
+                        { _id: inserted._id },
+                        { $push: { tokens: { access, token } } },
+                        { returnOriginal: false }
+                    );
+                res.set('x-auth', token);
+                return res.render('add-prod-vendor.hbs', {
+                    pageTitle: 'Dashboard',
+                    vendorName: inserted.name,
+                    vendorID: inserted._id.toString()
+                }, (err, html) => {
+                    if (err) return res.send('Rendering error');
+                    res.send(html);
+                });
+            } else {
+                return res.send('Invalid access type');
+            }
+        } catch (error) {
+            console.log(error);
+            return res.send('Some error occurred');
         }
     });
 

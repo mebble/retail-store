@@ -16,9 +16,11 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "hbs": "^4.0.3",
+    "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.2.3",
     "request": "^2.88.0",
     "request-promise": "^4.2.4"
