@@ -58,12 +58,19 @@ module.exports = ({ dbA, dbB, meta }) => {
             const p1 = dbA.collection('products').find({ category }).toArray();
             const p2 = dbB.collection('products').find({ category }).toArray();
             const [ resA, resB ] = await Promise.all([p1, p2]);
-            const products = [...resA, ...resB];
-            // vendorIds = await Promise.all(products.map(async p => {
-            //     await dbA.collection('vendors').find({ _id: new ObjectId(p.vendorID) });
-            //     await dbB.collection('vendors').find({ _id: new ObjectId(p.vendorID) });
-            // }));
-            console.log(products);
+            let products = [...resA, ...resB];
+            products = await Promise.all(products.map(async p => {
+                const { shard } = await meta.collection('lookup').findOne({ object_id: p.vendorID });
+                const db = {
+                    'setA': dbA,
+                    'setB': dbB
+                }[shard];
+                const vendor = await db.collection('vendors').findOne({ _id: new ObjectID(p.vendorID) });
+                return {
+                    ...p,
+                    vendorName: vendor.name
+                };
+            }));
             res.render('product.hbs', {
                 pageTitle: 'Products',
                 productName: category,
