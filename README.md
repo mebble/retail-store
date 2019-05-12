@@ -2,33 +2,18 @@
 
 An online retail store
 
-## Running Multiple MongoDB Instances
+## Project Setup
 
-### Configuration File
+### Requirements
 
-Official instructions [here](https://docs.mongodb.com/manual/administration/configuration/#run-multiple-database-instances-on-the-same-system). Each instance `X` requires the following contents in its configuration file, `/etc/mongod-X.conf`:
+- Linux OS
+- Node JS version 8 or higher
+- npm (Node Package Manager) version 3 or higher
+- MongoDB version 4
 
-```yml
-processManagement:
-   fork: true
-   pidFilePath: /srv/mongodb/X.pid
-net:
-   bindIp: localhost
-   port: <port>
-storage:
-   dbPath: /srv/mongodb/X
-systemLog:
-   destination: file
-   path: /var/log/mongodb/X.log
-   logAppend: true
-storage:
-   journal:
-      enabled: true
-```
+### MongoDB cluster setup
 
-You'll need superuser priveleges to create and edit the file. Replace every `X` with the instance name. For the `net` section of the config file, `<port>` needs to start from `27018`, as the port of the default instance is `27017`. We also need to manually run `mkdir /srv/mongodb/X/` to create the directory database storage before starting the instance.
-
-This project's configuration structure is shown below. You'll have to create all these files/folders manually. The config file contents should follow the template shown above. These files (with these exact names) are what the source code expects. Also, the mongodb port numbers have currently been hard-coded in `server.js`, which is why the required port to be put in `<port>` in each `.conf` file has also been mentioned below.
+This project's configuration structure is shown below. You'll have to create all these files/folders manually. The `.conf` file contents should follow the template shown below in "Configuration File". These files (with these exact names) are what the source code expects. Also, the mongodb port numbers have currently been hard-coded in `server.js`, which is why the required port to be put in `<port>` in each `.conf` file has also been mentioned below.
 
 ```
 Config files:
@@ -53,11 +38,22 @@ Database storage directories:
 /srv/mongodb/meta2
 /srv/mongodb/meta3
 ```
+
 ### Example
+
+Here is an example for setting up the `A1` instance of the server.
+Create the `.conf` file using:
 ```bash
 cd /etc
 sudo gedit mongod-A1.conf
 ```
+
+Create the database storage directorie using:
+```bash
+sudo mkdir /srv/mongodb/A1
+```
+
+The following contents are to be in `mongod-A1.conf`:
 ```yml
 processManagement:
    fork: true
@@ -77,6 +73,82 @@ storage:
 replication:
   replSetName: setA
 ```
+
+After creating the above file for `A1`, `A2` and `A3`, you need to register their replica
+set, `setA`. Open a mongo client:
+
+```bash
+mongo localhost:27018
+```
+Register the replica set `setA`:
+
+```js
+config = {
+   _id: 'setA',
+   members: [
+      { _id : 0, host : "localhost:27018" },
+      { _id : 1, host : "localhost:27019" },
+      { _id : 2, host : "localhost:27020" }
+   ]
+};
+rs.initiate(config);
+```
+
+The database configuration is now complete. To install server-side libraries, run:
+
+```bash
+npm install
+```
+
+The client-side libraries are already included.
+
+### Running The Project
+
+Start the replica sets through:
+
+```bash
+bash ./scripts/replica-start.sh
+```
+
+Start the server through:
+
+```bash
+bash ./init-apps.sh
+```
+
+To stop the replica sets:
+
+```bash
+bash ./scripts/replica-stop.sh
+```
+
+## General Instructions
+
+The instructions here are for any general project that uses a mongodb cluster. The section above is a condensed version of what is given here.
+
+### Configuration File
+
+Official instructions [here](https://docs.mongodb.com/manual/administration/configuration/#run-multiple-database-instances-on-the-same-system). Each instance `X` requires the following contents in its configuration file, `/etc/mongod-X.conf`:
+
+```yml
+processManagement:
+   fork: true
+   pidFilePath: /srv/mongodb/X.pid
+net:
+   bindIp: localhost
+   port: <port>
+storage:
+   dbPath: /srv/mongodb/X
+systemLog:
+   destination: file
+   path: /var/log/mongodb/X.log
+   logAppend: true
+storage:
+   journal:
+      enabled: true
+```
+
+You'll need superuser priveleges to create and edit the file. Replace every `X` with the instance name. For the `net` section of the config file, `<port>` needs to start from `27018`, as the port of the default instance is `27017`. We also need to manually run `mkdir /srv/mongodb/X/` to create the directory database storage before starting the instance.
 
 ### Starting An Instance
 
