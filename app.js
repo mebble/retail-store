@@ -125,105 +125,105 @@ module.exports = ({ dbA, dbB, meta }) => {
         }
     });
 
-    app.post('/access', async (req, res) => {
-        // form object has been stringified and is a key within req.body
-        const form = JSON.parse(Object.keys(req.body)[0]);
-        console.log(form);
-        try {
-            if (type === 'login') {
-                let db;
-                let v1;
-                try {
-                    v1 = await dbA.collection('vendors').findOne({ name: form.name });
-                    db = dbA;
-                } catch (error) {
-                    v1 = undefined;
-                }
-                let v2;
-                try {
-                    v2 = await dbB.collection('vendors').findOne({ name: form.name });
-                    db = dbB;
-                } catch (error) {
-                    v2 = undefined;
-                }
-                const vendor = v1
-                    ? v1
-                    : v2
-                        ? v2 : undefined;
-                if (typeof vendor === 'undefined') return res.send("Vendor doesn't exist");
+    // app.post('/access', async (req, res) => {
+    //     // form object has been stringified and is a key within req.body
+    //     const form = JSON.parse(Object.keys(req.body)[0]);
+    //     console.log(form);
+    //     try {
+    //         if (type === 'login') {
+    //             let db;
+    //             let v1;
+    //             try {
+    //                 v1 = await dbA.collection('vendors').findOne({ name: form.name });
+    //                 db = dbA;
+    //             } catch (error) {
+    //                 v1 = undefined;
+    //             }
+    //             let v2;
+    //             try {
+    //                 v2 = await dbB.collection('vendors').findOne({ name: form.name });
+    //                 db = dbB;
+    //             } catch (error) {
+    //                 v2 = undefined;
+    //             }
+    //             const vendor = v1
+    //                 ? v1
+    //                 : v2
+    //                     ? v2 : undefined;
+    //             if (typeof vendor === 'undefined') return res.send("Vendor doesn't exist");
 
-                const access = 'auth';
-                const token = jwt.sign({
-                    _id: vendor._id.toString(),
-                    access
-                }, JWT_SECRET).toString();
-                const vendor = await db.collection('vendors')
-                    .findOneAndUpdate(
-                        { _id: vendor._id },
-                        { $push: { tokens: { access, token } } },
-                        { returnOriginal: false }
-                    );
-                res.set('x-auth', token);
-                res.render('', {}, (err, html) => {
+    //             const access = 'auth';
+    //             const token = jwt.sign({
+    //                 _id: vendor._id.toString(),
+    //                 access
+    //             }, JWT_SECRET).toString();
+    //             const vendor = await db.collection('vendors')
+    //                 .findOneAndUpdate(
+    //                     { _id: vendor._id },
+    //                     { $push: { tokens: { access, token } } },
+    //                     { returnOriginal: false }
+    //                 );
+    //             res.set('x-auth', token);
+    //             res.render('', {}, (err, html) => {
 
-                });
-            } else if (type === 'signup') {
-                const shards = await meta.collection('shards').find().toArray();
-                const sizes = shards.map(r => r.size);
-                const [i] = argmins(sizes);
-                const shard = shards[i].name;
-                const db = {
-                    'setA': dbA,
-                    'setB': dbB
-                }[shard];
-                if (typeof db === 'undefined') {
-                    return res.send('Couldn\'t find shard');
-                }
+    //             });
+    //         } else if (type === 'signup') {
+    //             const shards = await meta.collection('shards').find().toArray();
+    //             const sizes = shards.map(r => r.size);
+    //             const [i] = argmins(sizes);
+    //             const shard = shards[i].name;
+    //             const db = {
+    //                 'setA': dbA,
+    //                 'setB': dbB
+    //             }[shard];
+    //             if (typeof db === 'undefined') {
+    //                 return res.send('Couldn\'t find shard');
+    //             }
 
-                const { name, password } = req.body;
-                const hash = await bcrypt.hash(password, 10);
-                const inserted = (await db.collection('vendors').insertOne({
-                    name,
-                    password: hash,
-                    tokens: []
-                })).ops[0];
+    //             const { name, password } = req.body;
+    //             const hash = await bcrypt.hash(password, 10);
+    //             const inserted = (await db.collection('vendors').insertOne({
+    //                 name,
+    //                 password: hash,
+    //                 tokens: []
+    //             })).ops[0];
 
-                await meta.collection('shards')
-                    .findOneAndUpdate(
-                        { name: shard },
-                        { $inc: { size: 1 } },
-                        { returnOriginal: false }
-                    );
-                await meta.collection('lookup').insertOne({
-                    object_id: inserted._id.toString(),
-                    shard: shard
-                });
+    //             await meta.collection('shards')
+    //                 .findOneAndUpdate(
+    //                     { name: shard },
+    //                     { $inc: { size: 1 } },
+    //                     { returnOriginal: false }
+    //                 );
+    //             await meta.collection('lookup').insertOne({
+    //                 object_id: inserted._id.toString(),
+    //                 shard: shard
+    //             });
 
-                const access = 'auth';
-                const token = jwt.sign({
-                    _id: inserted._id.toString(),
-                    access
-                }, JWT_SECRET).toString();
-                const vendor = await db.collection('vendors')
-                    .findOneAndUpdate(
-                        { _id: inserted._id },
-                        { $push: { tokens: { access, token } } },
-                        { returnOriginal: false }
-                    );
-                res.set('x-auth', token);
-                return res.render('add-prod-vendor.hbs', {
-                    pageTitle: 'Dashboard'
-                }, (err, html) => {
-                    if (err) return res.send('Rendering error');
-                    res.send(html);
-                });
-            } else {
-                return res.send('Invalid access type');
-            }
-        } catch (error) {
-            return res.send('Some error occurred');
-        }
-    });
+    //             const access = 'auth';
+    //             const token = jwt.sign({
+    //                 _id: inserted._id.toString(),
+    //                 access
+    //             }, JWT_SECRET).toString();
+    //             const vendor = await db.collection('vendors')
+    //                 .findOneAndUpdate(
+    //                     { _id: inserted._id },
+    //                     { $push: { tokens: { access, token } } },
+    //                     { returnOriginal: false }
+    //                 );
+    //             res.set('x-auth', token);
+    //             return res.render('add-prod-vendor.hbs', {
+    //                 pageTitle: 'Dashboard'
+    //             }, (err, html) => {
+    //                 if (err) return res.send('Rendering error');
+    //                 res.send(html);
+    //             });
+    //         } else {
+    //             return res.send('Invalid access type');
+    //         }
+    //     } catch (error) {
+    //         return res.send('Some error occurred');
+    //     }
+    // });
 
     app.get('/test', (req, res) => {
         res.send(`RESPONSE: ${Date.now()}`);
