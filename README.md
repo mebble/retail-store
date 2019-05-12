@@ -98,6 +98,19 @@ rs.initiate(config);
 
 Perform the same steps for registering instances to `setB` and `metaSet`.
 
+Now we need to initiate the metadata, which is stored in `metaSet`. Hence, log in to the primary `metaSet` instance through the mongo client:
+
+```bash
+mongo localhost:27030 (assuming the primary instance is running on 27030)
+```
+
+Insert the initial data:
+
+```bash
+metaSet:PRIMARY> use retail-store-meta
+metaSet:PRIMARY> db.shards.insertMany([{ name: 'setA', size: 0 }, { name: 'setB', size: 0 }])
+```
+
 The database configuration is now complete. To install server-side libraries, run:
 
 ```bash
